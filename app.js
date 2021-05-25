@@ -11,53 +11,43 @@ mongoose.connect('mongodb://localhost:27017/satyam', { useNewUrlParser: true, us
 
 
 // actual work starts here
-const StudentModel = require("./models/student") // model import
-const HouseModel = require("./models/house") // model import
+const LoanModel = require("./models/loan") // model import
+
 
 
 app.get('/', function (req, res) {
     res.send('Hello World');
 })
 
-app.post('/student', async function (req, res) {
+app.post('/loan', async function (req, res) {
     console.log(req.body) // only to print
 
-    const student = new StudentModel(req.body)
-    const doc = await student.save()
+    const loan = new LoanModel(req.body)
+    const doc = await loan.save()
     return res.status(200).send(doc)
 })
 
-app.get('/students', async function (req, res) {
-    const docs = await StudentModel.find()
+app.put("/loan/:account_no", async function (req, res) {
+    const account_no = req.params.account_no
+    const updateObject = req.body
+    const n = await LoanModel.updateOne({
+        account_no: account_no
+    }, updateObject)
+    console.log("n=>", n)
+    return res.status(200).send()
+})
+
+app.get('/loans', async function (req, res) {
+    const docs = await LoanModel.find()
     return res.status(200).send(docs)
 })
 
-app.get('/student/:id', async function (req, res){
+app.get('/loan/:id', async function (req, res) {
     const id = req.params.id
-    const doc = await StudentModel.findById(mongoose.Types.ObjectId(id))
+    const doc = await LoanModel.findById(mongoose.Types.ObjectId(id))
     return res.status(200).send(doc)
 })
 
-
-
-app.post('/house', async function (req, res) {
-    console.log(req.body) // only to print
-
-    const house = new HouseModel(req.body)
-    const doc = await house.save()
-    return res.status(200).send(doc)
-})
-
-app.get('/houses', async function (req, res) {
-    const docs = await HouseModel.find()
-    return res.status(200).send(docs)
-})
-
-app.get('/house/:id', async function (req, res){
-    const id = req.params.id
-    const doc = await HouseModel.findById(mongoose.Types.ObjectId(id))
-    return res.status(200).send(doc)
-})
 
 
 
